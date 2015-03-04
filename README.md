@@ -1,4 +1,7 @@
-# svg2png command line wrapper [![Travis](https://img.shields.io/travis/joyent/node.svg?style=flat-square)](https://travis-ci.org/mcous/svg2png-command)
+# svg2png command line wrapper
+ [![Travis](https://img.shields.io/travis/mcous/svg2png-command.svg?style=flat-square)](https://travis-ci.org/mcous/svg2png-command)
+ [![David](https://img.shields.io/david/mcous/svg2png-command.svg?style=flat-square)](https://david-dm.org/mcous/svg2png-command)
+ [![npm](https://img.shields.io/npm/v/svg2png-command.svg?style=flat-square)](https://www.npmjs.com/package/svg2png-command)
 
 This module is a (very thin) command line wrapper around domenic's [svg2png](https://github.com/domenic/svg2png).
 
@@ -8,7 +11,7 @@ This module is a (very thin) command line wrapper around domenic's [svg2png](htt
 
 ## use
 
-`$ svg2png [options] -- file(s)`
+`$ svg2png [options] -- [file/glob](s)`
 
 Default output directory is the directory the SVGs live in and the default output filename is the same filename with `.svg` replaced with `.png`
 
