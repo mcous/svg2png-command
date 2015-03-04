@@ -1,0 +1,41 @@
+{
+  "name": "svg2png-command",
+  "version": "0.0.1",
+  "description": "A command line wrapper around domenic's svg2png",
+  "preferGlobal": true,
+  "bin": {
+    "svg2png": "./index.js"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mcous/svg2png-command"
+  },
+  "keywords": [
+    "svg2png",
+    "svg",
+    "png",
+    "cli",
+    "image",
+    "converter"
+  ],
+  "author": "Mike Cousins <mike@cousins.io> (http://cousins.io)",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/mcous/svg2png-command/issues"
+  },
+  "homepage": "https://github.com/mcous/svg2png-command",
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "glob": "^4.4.1",
+    "minimist": "^1.1.0",
+    "svg2png": "^1.1.0"
+  },
+  "devDependencies": {
+    "del": "^1.1.1",
+    "image-size": "^0.3.5",
+    "tape": "^3.5.0"
+  }
+}

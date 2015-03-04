@@ -1,0 +1,3 @@
+node_modules
+tests/svgs/*.png
+tests/temp
