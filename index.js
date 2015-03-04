@@ -95,7 +95,9 @@ var userInputHandler = function(filename) {
     else if (!files.length) {
       err('Error: ' + filename + ' did not match any existing filenames')
     }
-    svgArrayHandler(files);
+    else {
+      svgArrayHandler(files);
+    }
   });
 }
 
