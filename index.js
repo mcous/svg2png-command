@@ -22,15 +22,15 @@ var err = function(error) {
 
 // help text
 var help = [
-  "$ svg2png [options] -- [file/glob](s)",
-  "",
-  "Default output directory is the directory the SVGs live in",
-  "",
-  "flag        | parameter | description                  ",
-  "------------|-----------|------------------------------",
-  "-o, --out   | path      | Output directory             ",
-  "-s, --scale | float     | Scales the PNG               ",
-  "-h, --help  | N/A       | Outputs the help text        "
+  '$ svg2png [options] -- [file/glob](s)',
+  '',
+  'Default output directory is the directory the SVGs live in',
+  '',
+  'flag        | parameter | description                  ',
+  '------------|-----------|------------------------------',
+  '-o, --out   | path      | Output directory             ',
+  '-s, --scale | float     | Scales the PNG               ',
+  '-h, --help  | N/A       | Outputs the help text        '
 ].join('\n');
 
 // parse arguments
@@ -73,7 +73,7 @@ var convertSvg = function(svg) {
   // actually convert now
   svg2png(svg, out, scale, function(e) {
     if (e) {
-      err(e);
+      err(chalk.bold(svg) + ' - ' + e);
     }
     else {
       success(chalk.bold(svg) + ' converted to ' + chalk.bold(out));
@@ -93,7 +93,7 @@ var userInputHandler = function(filename) {
       err(er.message);
     }
     else if (!files.length) {
-      err('Error: ' + filename + ' did not match any existing filenames')
+      err('Error: ' + filename + ' did not match any existing filenames');
     }
     else {
       svgArrayHandler(files);
