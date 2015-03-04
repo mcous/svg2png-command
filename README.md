@@ -1,10 +1,10 @@
-# svg2png command line wrapper
+# svg2png command line wrapper [![Travis](https://img.shields.io/travis/joyent/node.svg?style=flat-square)](https://travis-ci.org/mcous/svg2png-command)
 
 This module is a (very thin) command line wrapper around domenic's [svg2png](https://github.com/domenic/svg2png).
 
 ## install
 
-`$ npm install -g svg2png-command-line`
+`$ npm install -g svg2png-command`
 
 ## use
 
