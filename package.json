@@ -7,7 +7,7 @@
     "svg2png": "./index.js"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "mocha --timeout 5000 test.js"
   },
   "repository": {
     "type": "git",
@@ -29,13 +29,16 @@
   "homepage": "https://github.com/mcous/svg2png-command",
   "dependencies": {
     "chalk": "^1.0.0",
-    "glob": "^4.4.1",
+    "glob": "^6.0.1",
     "minimist": "^1.1.0",
-    "svg2png": "^1.1.0"
+    "svg2png": "^2.0.0"
   },
   "devDependencies": {
-    "del": "^1.1.1",
-    "image-size": "^0.3.5",
-    "tape": "^3.5.0"
+    "async": "^1.5.0",
+    "chai": "^3.4.1",
+    "del": "^2.1.0",
+    "image-size": "^0.4.0",
+    "mocha": "^2.3.4",
+    "rimraf": "^2.4.4"
   }
 }

@@ -1,8 +1,9 @@
 # svg2png command line wrapper
- [![Travis](https://img.shields.io/travis/mcous/svg2png-command.svg?style=flat-square)](https://travis-ci.org/mcous/svg2png-command)
- [![David](https://img.shields.io/david/mcous/svg2png-command.svg?style=flat-square)](https://david-dm.org/mcous/svg2png-command)
- [![David](https://img.shields.io/david/dev/mcous/svg2png-command.svg?style=flat-square)](https://david-dm.org/mcous/svg2png-command#info=devDependencies&view=table)
- [![npm](https://img.shields.io/npm/v/svg2png-command.svg?style=flat-square)](https://www.npmjs.com/package/svg2png-command)
+
+[![npm](https://img.shields.io/npm/v/svg2png-command.svg?style=flat-square)](https://www.npmjs.com/package/svg2png-command)
+[![Travis](https://img.shields.io/travis/mcous/svg2png-command.svg?style=flat-square)](https://travis-ci.org/mcous/svg2png-command)
+[![David](https://img.shields.io/david/mcous/svg2png-command.svg?style=flat-square)](https://david-dm.org/mcous/svg2png-command)
+[![David](https://img.shields.io/david/dev/mcous/svg2png-command.svg?style=flat-square)](https://david-dm.org/mcous/svg2png-command#info=devDependencies&view=table)
 
 This module is a (very thin) command line wrapper around domenic's [svg2png](https://github.com/domenic/svg2png). Use it to convert SVGs to PNGs from your command line like: `$ svg2png --scale 2.0 --out /png/dir -- svg1.svg svg2.svg`
 
@@ -12,7 +13,7 @@ This module is a (very thin) command line wrapper around domenic's [svg2png](htt
 
 ## use
 
-`$ svg2png [options] -- [file/glob](s)`
+`$ svg2png [options] -- files_or_glob`
 
 Default output directory is the directory the SVGs live in and the default output filename is the same filename with `.svg` replaced with `.png`
 
@@ -31,5 +32,3 @@ A command line tool called `svg2png` already exists in the world, and you may ha
 ## test
 
 `$ npm test`
-
-Tests are written using [Tape](https://github.com/substack/tape).

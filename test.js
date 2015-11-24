@@ -1,152 +1,155 @@
 // test for the command line wrapper around svg2png
-exec = require('child_process').exec;
-path = require('path');
-test = require('tape');
-imageSize = require('image-size');
-del = require('del');
+// mostly just checks that the image size matches what's expected
+// this should be enough for our purposes
+'use strict';
 
-var svgSize = [
-  imageSize(path.join(__dirname, 'tests/svgs/test-svg-0.svg')),
-  imageSize(path.join(__dirname, 'tests/svgs/test-svg-1.svg')),
-  imageSize(path.join(__dirname, 'tests/svgs/test-svg-2.svg'))
-]
+var fs = require('fs');
+var path = require('path');
+var childProcess = require('child_process');
+var async = require('async');
+var imageSize = require('image-size');
+var expect = require('chai').expect;
 
-var command = function(args, cb) {
-  exec(path.join(__dirname, 'index.js') + " " + args, cb);
-}
+var SVG = ['test-svg-0.svg', 'test-svg-1.svg', 'test-svg-2.svg'].map(function(svg) {
+  return path.join(__dirname, 'test/svg', svg)
+});
 
-var clean = function(cb) {
-  del(['./tests/svgs/*.png', './tests/temp'], function(e) {
-    if (e) {
-      throw e
-    }
-    cb();
+var PNG = SVG.map(function(svg) {
+  return path.join(path.dirname(svg), path.basename(svg, '.svg') + '.png')
+});
+
+var svgSize = SVG.map(function(svg) {
+  return imageSize(svg)
+});
+
+var command = function(args, done) {
+  childProcess.exec(path.join(__dirname, 'index.js') + " " + args, done);
+};
+
+// clean a file and ignore errors
+var cleanOne = function(file, done) {
+  fs.unlink(file, function() {
+    done();
   });
-}
+};
 
-// all the tests to run
-var tests = function() {
-  // it should be able to convert a file
-  test('it should convert a single file', function(expect) {
-    expect.plan(2);
-    command('tests/svgs/test-svg-0.svg', function() {
-      // check that image sizes match to verify, which should be enough for us
-      var pSize = imageSize(path.join(__dirname, 'tests/svgs/test-svg-0.png'));
-      // clean the output and check our assertions
-      clean(function() {
-        expect.equal(svgSize[0].width, pSize.width);
-        expect.equal(svgSize[0].height, pSize.height);
-      });
+var clean = function(done) {
+  async.each(PNG, cleanOne, done);
+};
+
+describe('svg2png command', function() {
+  beforeEach(clean);
+  after(clean);
+
+  it('should convert a single file', function(done) {
+    command('test/svg/test-svg-0.svg', function() {
+      var pngSize = imageSize(PNG[0]);
+      expect(svgSize[0].width).to.equal(pngSize.width);
+      expect(svgSize[0].height).to.equal(pngSize.height);
+      done();
     });
   });
 
-  // it should work with several files being passed in
-  test('it should convert several files', function(expect) {
-    expect.plan(4);
-    command('tests/svgs/test-svg-0.svg tests/svgs/test-svg-1.svg', function() {
-      // check that image sizes match to verify, which should be enough for us
-      var pSize0 = imageSize(path.join(__dirname, 'tests/svgs/test-svg-0.png'));
-      var pSize1 = imageSize(path.join(__dirname, 'tests/svgs/test-svg-1.png'));
-      // clean the output and check our assertions
-      clean(function() {
-        expect.equal(svgSize[0].width, pSize0.width);
-        expect.equal(svgSize[0].height, pSize0.height);
-        expect.equal(svgSize[1].width, pSize1.width);
-        expect.equal(svgSize[1].height, pSize1.height);
-      });
+  it('should convert several files', function(done) {
+    command('test/svg/test-svg-0.svg test/svg/test-svg-1.svg', function() {
+      var pSize0 = imageSize(PNG[0]);
+      var pSize1 = imageSize(PNG[1]);
+      expect(svgSize[0].width).to.equal(pSize0.width);
+      expect(svgSize[0].height).to.equal(pSize0.height);
+      expect(svgSize[1].width).to.equal(pSize1.width);
+      expect(svgSize[1].height).to.equal(pSize1.height);
+      done();
     });
   });
 
-  // it should work with a blob passed in
-  test('it should convert a blob of files', function(expect) {
-    expect.plan(6);
-    command('tests/**/*.svg', function() {
-      // check that image sizes match to verify, which should be enough for us
-      var pSize0 = imageSize(path.join(__dirname, 'tests/svgs/test-svg-0.png'));
-      var pSize1 = imageSize(path.join(__dirname, 'tests/svgs/test-svg-1.png'));
-      var pSize2 = imageSize(path.join(__dirname, 'tests/svgs/test-svg-2.png'));
-      // clean the output and check our assertions
-      clean(function() {
-        expect.equal(svgSize[0].width, pSize0.width);
-        expect.equal(svgSize[0].height, pSize0.height);
-        expect.equal(svgSize[1].width, pSize1.width);
-        expect.equal(svgSize[1].height, pSize1.height);
-        expect.equal(svgSize[2].width, pSize2.width);
-        expect.equal(svgSize[2].height, pSize2.height);
-      });
+  it('should convert a blob of files', function(done) {
+    command('test/**/*.svg', function() {
+      var pSize0 = imageSize(PNG[0]);
+      var pSize1 = imageSize(PNG[1]);
+      var pSize2 = imageSize(PNG[2]);
+      expect(svgSize[0].width).to.equal(pSize0.width);
+      expect(svgSize[0].height).to.equal(pSize0.height);
+      expect(svgSize[1].width).to.equal(pSize1.width);
+      expect(svgSize[1].height).to.equal(pSize1.height);
+      expect(svgSize[2].width).to.equal(pSize2.width);
+      expect(svgSize[2].height).to.equal(pSize2.height);
+      done();
     });
   });
 
   // it should respect the scale option
-  test('it should respect the scale flag', function(expect) {
+  it('should respect the scale flag', function(done) {
     var commands = 0;
     var finishCommand = function() {
       if (++commands > 1) {
-        clean(expect.end)
+        done();
       }
     }
-    command('-s 0.5 -- tests/svgs/test-svg-0.svg', function() {
-      var pSize = imageSize(path.join(__dirname, 'tests/svgs/test-svg-0.png'));
-      expect.equal(svgSize[0].width / 2, pSize.width);
-      expect.equal(svgSize[0].height / 2, pSize.height);
+
+    command('-s 0.5 -- test/svg/test-svg-0.svg', function() {
+      var pSize = imageSize(PNG[0]);
+      expect(svgSize[0].width / 2).to.equal(pSize.width);
+      expect(svgSize[0].height / 2).to.equal(pSize.height);
       finishCommand();
     });
-    command('--scale 2 -- tests/svgs/test-svg-1.svg', function() {
-      var pSize = imageSize(path.join(__dirname, 'tests/svgs/test-svg-1.png'));
-      expect.equal(2 * svgSize[1].width, pSize.width);
-      expect.equal(2 * svgSize[1].height, pSize.height);
+    command('--scale 2 -- test/svg/test-svg-1.svg', function() {
+      var pSize = imageSize(PNG[1]);
+      expect(2 * svgSize[1].width).to.equal(pSize.width);
+      expect(2 * svgSize[1].height).to.equal(pSize.height);
       finishCommand();
     });
   });
 
   // it should respect the output option
-  test('it should respect the out flag', function(expect) {
+  it('should respect the out flag', function(done) {
     var commands = 0;
-    var finishCommand = function() {
-      if (++commands > 1) {
-        clean(expect.end)
-      }
-    }
-    command('-o tests/temp -- tests/svgs/test-svg-0.svg', function() {
-      var pSize = imageSize(path.join(__dirname, 'tests/temp/test-svg-0.png'));
-      expect.equal(svgSize[0].width, pSize.width);
-      expect.equal(svgSize[0].height, pSize.height);
-      finishCommand();
-    });
-    command('--out tests/temp -- tests/svgs/test-svg-1.svg', function() {
-      var pSize = imageSize(path.join(__dirname, 'tests/temp/test-svg-1.png'));
-      expect.equal(svgSize[1].width, pSize.width);
-      expect.equal(svgSize[1].height, pSize.height);
-      finishCommand();
-    });
-  });
-
-  // it should warn for files that don't end in .svg
-  test('it should log a warning given potential non-svgs', function(expect) {
-    expect.plan(1);
-    command('tests/svgs/test-svg.badext', function(err, stdout, stderr) {
-      expect.ok(/Warning:.*may not be an SVG/.test(stderr));
-    });
-  });
-
-  // it should error for files that don't exist
-  test("it should log an error when files don't exist", function(expect) {
-    expect.plan(1);
-    command('not-a-file.svg', function(err, stdout, stderr) {
-      expect.ok(/Error:.*did not match/.test(stderr));
-    });
-  });
-
-  // it should log a success message when a file convers
-  test('it should log on a successful conversion', function(expect) {
-    expect.plan(1);
-    command('tests/svgs/test-svg-0.svg', function(err, stdout, stderr) {
-      clean(function() {
-        expect.ok(/converted to/.test(stdout));
+    var finishCommand = function(file) {
+      fs.unlink(file, function() {
+        if (++commands > 1) {
+          fs.rmdir(path.join(__dirname, 'test/temp'), function() {
+            done();
+          });
+        }
       });
+    };
+
+    command('-o test/temp -- test/svg/test-svg-0.svg', function() {
+      var png = path.join(__dirname, 'test/temp/test-svg-0.png')
+      var pSize = imageSize(png);
+      expect(svgSize[0].width).to.equal(pSize.width);
+      expect(svgSize[0].height).to.equal(pSize.height);
+      finishCommand(png);
+    });
+    command('--out test/temp -- test/svg/test-svg-1.svg', function() {
+      var png = path.join(__dirname, 'test/temp/test-svg-1.png')
+      var pSize = imageSize(png);
+      expect(svgSize[1].width).to.equal(pSize.width);
+      expect(svgSize[1].height).to.equal(pSize.height);
+      finishCommand(png);
     });
   });
-}
 
-// clean the test dirs and run the tests
-clean(tests);
+  it('should log a warning given potential non-svgs', function(done) {
+    command('test/svg/test-svg.badext', function(err, stdout, stderr) {
+      expect(err).to.be.null;
+      expect(stderr).to.match(/Warning:.*may not be an SVG/);
+      done();
+    });
+  });
+
+  it('should log an error when files do not exist', function(done) {
+    command('not-a-file.svg', function(err, stdout, stderr) {
+      expect(err).to.be.null;
+      expect(stderr).to.match(/Error:.*did not match/);
+      done();
+    });
+  });
+
+  it('should log on a successful conversion', function(done) {
+    command('test/svg/test-svg-0.svg', function(err, stdout) {
+      expect(err).to.be.null;
+      expect(stdout).to.match(/converted to/);
+      done();
+    });
+  });
+});

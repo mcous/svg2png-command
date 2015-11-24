@@ -3,12 +3,13 @@ language: node_js
 node_js:
 - '0.12'
 - '0.10'
-- iojs
+- node
 deploy:
   provider: npm
   email: mike@cousins.io
   api_key:
     secure: jfv3kjMbXk9btE6HVV8FmtXbNpsyMpIRMCONt4ZAeOKtLk7SxjDtGg4TNqcxTccoKIffSAa4OVpjVoJ2AapOzKGsMN5/vYO4346qqN2/SFBxnpOr2maDr97Bd0qFr1pTN5vvnNOp0u8xt1N5amwEpfuYEoNscp7StXtP2P5ziIs=
   on:
+    node: node
     tags: true
-    repo: mcous/svg2png-command
+    all_branches: true

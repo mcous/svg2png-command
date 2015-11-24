@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-
 // cli wrapper for domenic/svg2png
-'use strict;'
+'use strict';
 
 var path = require('path');
 var svg2png = require('svg2png');
@@ -22,15 +21,16 @@ var err = function(error) {
 
 // help text
 var help = [
-  '$ svg2png [options] -- [file/glob](s)',
+  'svg2png command line wrapper',
   '',
-  'Default output directory is the directory the SVGs live in',
+  'usage:',
+  'svg2png [options] files_or_glob',
   '',
-  'flag        | parameter | description                  ',
-  '------------|-----------|------------------------------',
-  '-o, --out   | path      | Output directory             ',
-  '-s, --scale | float     | Scales the PNG               ',
-  '-h, --help  | N/A       | Outputs the help text        '
+  'option      | parameter | description                            ',
+  '------------|-----------|----------------------------------------',
+  '-o, --out   | path      | output directory (defaults to SVG dir) ',
+  '-s, --scale | float     | scales the PNG (defaults to 1.0)       ',
+  '-h, --help  | N/A       | outputs the help text                  '
 ].join('\n');
 
 // parse arguments
@@ -67,39 +67,35 @@ var convertSvg = function(svg) {
   if (ext != '.svg') {
     warn("Warning: " + svg + " doesn't end with '.svg'; it may not be an SVG");
   }
+
   // get the output directory from the options or from the svg's location
   var out = args.out || path.dirname(svg);
   out = path.join(out, path.basename(svg, ext) + '.png');
-  // actually convert now
-  svg2png(svg, out, scale, function(e) {
-    if (e) {
-      err(chalk.bold(svg) + ' - ' + e);
-    }
-    else {
-      success(chalk.bold(svg) + ' converted to ' + chalk.bold(out));
-    }
-  });
-}
 
-// svg file array from glob handler
-var svgArrayHandler = function(svgArray) {
-  svgArray.forEach(convertSvg);
-}
+  // actually convert now
+  svg2png(svg, out, scale, function(error) {
+    if (error) {
+      return err(chalk.bold(svg) + ' - ' + error.message);
+    }
+
+    success(chalk.bold(svg) + ' converted to ' + chalk.bold(out));
+  });
+};
 
 // user input handler
 var userInputHandler = function(filename) {
-  glob(filename, function(er, files) {
-    if (er) {
-      err(er.message);
+  glob(filename, function(error, files) {
+    if (error) {
+      return err(error.message);
     }
-    else if (!files.length) {
-      err('Error: ' + filename + ' did not match any existing filenames');
+
+    if (!files.length) {
+      return err('Error: ' + filename + ' did not match any existing filenames');
     }
-    else {
-      svgArrayHandler(files);
-    }
+
+    files.forEach(convertSvg);
   });
-}
+};
 
 // let's get it started
 // for every filename or glob input by the user, call the userInputHandler
