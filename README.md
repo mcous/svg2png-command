@@ -1,4 +1,6 @@
-# svg2png command line wrapper
+# DEPRECATED - svg2png command line wrapper
+
+**[svg2png](https://github.com/domenic/svg2png) (which this package wraps) now includes its own CLI, so you should probably just use it directly instead**
 
 [![npm](https://img.shields.io/npm/v/svg2png-command.svg?style=flat-square)](https://www.npmjs.com/package/svg2png-command)
 [![Travis](https://img.shields.io/travis/mcous/svg2png-command.svg?style=flat-square)](https://travis-ci.org/mcous/svg2png-command)
