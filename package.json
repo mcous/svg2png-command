@@ -1,6 +1,6 @@
 {
   "name": "svg2png-command",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A command line wrapper around domenic's svg2png",
   "preferGlobal": true,
   "bin": {
